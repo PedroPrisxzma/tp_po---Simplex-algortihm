@@ -23,13 +23,11 @@ K = pl.split_b(input_pl)
 
 #constructs matrix A, in a numpy array format, separating from c vector
 Amatrix =  np.array([l.tolist() for l in K[0][1:]])
-
+Bmatrix = np.array([l.tolist() for l in K[1][1:]])
+Cmatrix = np.array([l.tolist() for l in K[0][0]])
 #PL contruction
-progL = pl.PL(Amatrix, K[0][0], K[1][1:], int(n), int(m))
+progL = pl.PL(Amatrix, Cmatrix, Bmatrix, int(n), int(m), input_pl)
 #puts it in FPI format
 progL.make_FPI()
 
-#pl.print_test(progL)
-
-a = simplex.tipo_sol(progL)
-
+simplex.simplex(progL)
