@@ -18,16 +18,33 @@ hue = file.readline()
 
 input_pl = np.array(json.loads(hue), dtype=float)
 
-#Separate A e b
-K = pl.split_b(input_pl)
+#converts to fraction matrix
+input_pl = np.matrix(input_pl)
+input_pl = input_pl.astype('object')
+for i in range(input_pl.shape[0]):
+    for j in range(input_pl.shape[1]):
+        input_pl[i, j] = fractions.Fraction(input_pl[i, j])
 
 #constructs matrix A, in a numpy array format, separating from c vector
-Amatrix =  np.array([l.tolist() for l in K[0][1:]])
-Bmatrix = np.array([l.tolist() for l in K[1][1:]])
-Cmatrix = np.array([l.tolist() for l in K[0][0]])
+Amatrix =  input_pl[1:, :-1]
+Bmatrix = input_pl[1:, int(n):]
+Cmatrix = input_pl[0, :-1]
+base = {}
+
+j = 1
+for i in range(int(m), 0, -1):
+    base[i-1] = (int(n) + int(m) - j)
+    j += 1     
+
+op_matrix = pl.make_frac_matrix(np.identity(int(m)))
+
+
 #PL contruction
-progL = pl.PL(Amatrix, Cmatrix, Bmatrix, int(n), int(m), input_pl)
+progL = pl.PL(Amatrix, Cmatrix, Bmatrix, int(n), int(m), op_matrix, base)
+
 #puts it in FPI format
+
 progL.make_FPI()
 
 simplex.simplex(progL)
+
